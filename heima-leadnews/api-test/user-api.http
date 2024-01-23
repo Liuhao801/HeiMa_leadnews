@@ -1,0 +1,13 @@
+### app用户登录
+POST {{app_gateway}}/user/api/v1/login/login_auth
+Content-Type: application/json
+
+{
+  "phone": "13511223456",
+  "password": "admin"
+}
+
+
+### 网关查询课程信息
+GET {{gateway_host}}/content/course/40
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOlsieHVlY2hlbmctcGx1cyJdLCJ1c2VyX25hbWUiOiJ6aGFuZ3NhbiIsInNjb3BlIjpbImFsbCJdLCJleHAiOjE3MDQ3MDU3NDQsImF1dGhvcml0aWVzIjpbInAxIl0sImp0aSI6IjYyN2FlYjBmLTg2ZjQtNGU5NS1iZDdlLTc0MWU4M2ZiYTA2OCIsImNsaWVudF9pZCI6IlhjV2ViQXBwIn0.1inkyHCqAFPsTnnYpzLJGKtWBnP4S2RSO69hTqiZRrs
