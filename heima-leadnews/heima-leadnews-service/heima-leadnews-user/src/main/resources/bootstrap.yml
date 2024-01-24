@@ -8,11 +8,6 @@ spring:
       server-addr: 43.137.8.13:8848
       discovery:
         namespace: leadnews
-        group: heima-leadnews
       config:
         namespace: leadnews
-        group: heima-leadnews
         file-extension: yaml
-
-  profiles:
-    active: dev
