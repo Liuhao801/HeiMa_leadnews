@@ -26,22 +26,22 @@ public class ApArticleServiceImpl extends ServiceImpl<ApArticleMapper, ApArticle
 
     /**
      * 加载文章
-     * @param articleHomeDto
+     * @param dto
      * @param type  1为加载更多  2为加载最新
      * @return
      */
     @Override
-    public ResponseResult load(ArticleHomeDto articleHomeDto, Short type) {
+    public ResponseResult load(ArticleHomeDto dto, Short type) {
         //1、校验参数
         //分页参数校验
-        Integer size = articleHomeDto.getSize();
+        Integer size = dto.getSize();
         if(size==null||size<=0){
             //默认查询10条数据
             size=10;
         }
         //最多查询50条数据
         size=Math.min(size,MAX_PAGE_SIZE);
-        articleHomeDto.setSize(size);
+        dto.setSize(size);
 
         //type参数校验
         if(!type.equals(ArticleConstants.LOADTYPE_LOAD_MORE)&&!type.equals(ArticleConstants.LOADTYPE_LOAD_NEW)){
@@ -49,16 +49,16 @@ public class ApArticleServiceImpl extends ServiceImpl<ApArticleMapper, ApArticle
         }
 
         //文章频道参数校验
-        if(StringUtils.isBlank(articleHomeDto.getTag())){
-            articleHomeDto.setTag(ArticleConstants.DEFAULT_TAG);
+        if(StringUtils.isBlank(dto.getTag())){
+            dto.setTag(ArticleConstants.DEFAULT_TAG);
         }
 
         //时间参数校验
-        if(articleHomeDto.getMaxBehotTime()==null)articleHomeDto.setMaxBehotTime(new Date());
-        if(articleHomeDto.getMinBehotTime()==null)articleHomeDto.setMinBehotTime(new Date());
+        if(dto.getMaxBehotTime()==null)dto.setMaxBehotTime(new Date());
+        if(dto.getMinBehotTime()==null)dto.setMinBehotTime(new Date());
 
         //2、查询数据
-        List<ApArticle> apArticles = apArticleMapper.loadArticleList(articleHomeDto, type);
+        List<ApArticle> apArticles = apArticleMapper.loadArticleList(dto, type);
         //3、封装结果并返回
         return ResponseResult.okResult(apArticles);
     }
