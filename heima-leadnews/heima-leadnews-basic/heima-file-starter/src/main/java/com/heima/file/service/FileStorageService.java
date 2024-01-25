@@ -31,7 +31,7 @@ public interface FileStorageService {
      * 删除文件
      * @param pathUrl  文件全路径
      */
-    public void delete(String pathUrl);
+    public boolean delete(String pathUrl);
 
     /**
      * 下载文件

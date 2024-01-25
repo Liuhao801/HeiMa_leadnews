@@ -109,7 +109,7 @@ public class MinIOFileStorageService implements FileStorageService {
      * @param pathUrl  文件全路径
      */
     @Override
-    public void delete(String pathUrl) {
+    public boolean delete(String pathUrl) {
         String key = pathUrl.replace(minIOConfigProperties.getEndpoint()+"/","");
         int index = key.indexOf(separator);
         String bucket = key.substring(0,index);
@@ -121,8 +121,9 @@ public class MinIOFileStorageService implements FileStorageService {
         } catch (Exception e) {
             log.error("删除minio文件失败，pathUrl:{}",pathUrl);
             e.printStackTrace();
+            return false;
         }
-
+        return true;
     }
 
 
