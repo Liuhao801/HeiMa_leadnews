@@ -1,0 +1,13 @@
+server:
+  port: 51803
+spring:
+  application:
+    name: leadnews-wemedia
+  cloud:
+    nacos:
+      server-addr: 43.137.8.13:8848
+      discovery:
+        namespace: leadnews
+      config:
+        namespace: leadnews
+        file-extension: yaml
