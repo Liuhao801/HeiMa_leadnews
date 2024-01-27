@@ -8,8 +8,10 @@ import com.heima.model.common.dtos.ResponseResult;
 import com.heima.model.common.enums.AppHttpCodeEnum;
 import com.heima.model.wemedia.dtos.WmMaterialDto;
 import com.heima.model.wemedia.pojos.WmMaterial;
+import com.heima.model.wemedia.pojos.WmNewsMaterial;
 import com.heima.utils.thread.WmThreadLocalUtils;
 import com.heima.wemedia.mapper.WmMaterialMapper;
+import com.heima.wemedia.mapper.WmNewsMaterialMapper;
 import com.heima.wemedia.service.WmMaterialService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -28,6 +31,8 @@ public class WmMaterialServiceImpl implements WmMaterialService {
     private WmMaterialMapper wmMaterialMapper;
     @Autowired
     private FileStorageService fileStorageService;
+    @Autowired
+    private WmNewsMaterialMapper wmNewsMaterialMapper;
 
     /**
      * 上传图片素材
@@ -115,14 +120,20 @@ public class WmMaterialServiceImpl implements WmMaterialService {
         if(wmMaterial==null){
             return ResponseResult.errorResult(AppHttpCodeEnum.DATA_NOT_EXIST);
         }
-        //3、从minio中删除数据
+        //3、查询是否存在相关联的文章
+        List<WmNewsMaterial> materialList = wmNewsMaterialMapper.selectList(new LambdaQueryWrapper<WmNewsMaterial>()
+                .eq(WmNewsMaterial::getMaterialId, id));
+        if(materialList!=null&&materialList.size()>0){
+            return ResponseResult.errorResult(AppHttpCodeEnum.MATERIASL_CNACEL_FAIL);
+        }
+        //4、从minio中删除数据
         String url = wmMaterial.getUrl();
         boolean b = fileStorageService.delete(url);
         if(!b){
             log.info("从minio中删除文件失败,id:{}",id);
             return ResponseResult.errorResult(AppHttpCodeEnum.SERVER_ERROR,"文件删除失败");
         }
-        //4、删除数据库中数据
+        //5、删除数据库中数据
         int i = wmMaterialMapper.deleteById(wmMaterial);
         if(i<=0){
             log.info("从数据库删除文件失败,id:{}",id);

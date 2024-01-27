@@ -25,7 +25,11 @@ public enum AppHttpCodeEnum {
     DATA_NOT_EXIST(1002,"数据不存在"),
     // 数据错误 3000~3500
     NO_OPERATOR_AUTH(3000,"无权限操作"),
-    NEED_ADMIND(3001,"需要管理员权限");
+    NEED_ADMIND(3001,"需要管理员权限"),
+
+    // 内容错误 3501-3600
+    MATERIASL_REFERENCE_FAIL(3501,"素材失效"),
+    MATERIASL_CNACEL_FAIL(3502,"存在与素材相关联的文章");
 
     int code;
     String errorMessage;

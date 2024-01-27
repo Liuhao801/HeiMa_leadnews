@@ -1,5 +1,6 @@
 package com.heima.wemedia.controller.v1;
 
+import com.heima.common.constants.WemediaConstants;
 import com.heima.model.common.dtos.ResponseResult;
 import com.heima.model.wemedia.dtos.WmMaterialDto;
 import com.heima.wemedia.service.WmMaterialService;
@@ -47,13 +48,13 @@ public class WmMaterialController {
     @ApiOperation("收藏图片")
     public ResponseResult collect(@PathVariable Integer id){
         log.info("收藏图片,图片id:{}",id);
-        return wmMaterialService.change_collect(id, (short) 1);
+        return wmMaterialService.change_collect(id, WemediaConstants.COLLECT_MATERIAL);
     }
 
     @GetMapping("cancel_collect/{id}")
     @ApiOperation("取消收藏图片")
     public ResponseResult cancelCollect(@PathVariable Integer id){
         log.info("取消收藏图片,图片id:{}",id);
-        return wmMaterialService.change_collect(id, (short) 0);
+        return wmMaterialService.change_collect(id, WemediaConstants.CANCEL_COLLECT_MATERIAL);
     }
 }
