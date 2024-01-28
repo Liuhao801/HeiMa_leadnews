@@ -1,0 +1,14 @@
+### 文章保存
+POST {{article}}/api/v1/article/save
+Content-Type: application/json
+
+{
+  "id": "1751462313770225665",
+  "title":"1111黑马头条项目背景",
+  "authorId":1102,
+  "layout":1,
+  "labels":"黑马头条",
+  "publishTime":"2028-03-14T11:35:49.000Z",
+  "images": "http://43.137.8.13:9000/leadnews/1.jpg",
+  "content":"黑马头条项目背景,黑马头条项目背景,黑马头条项目背景,黑马头条项目背景，黑马头条项目背景"
+}

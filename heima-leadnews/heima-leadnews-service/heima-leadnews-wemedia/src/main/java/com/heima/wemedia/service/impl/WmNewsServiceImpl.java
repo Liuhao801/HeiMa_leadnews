@@ -17,6 +17,7 @@ import com.heima.utils.thread.WmThreadLocalUtils;
 import com.heima.wemedia.mapper.WmMaterialMapper;
 import com.heima.wemedia.mapper.WmNewsMapper;
 import com.heima.wemedia.mapper.WmNewsMaterialMapper;
+import com.heima.wemedia.service.WmNewsAutoScanService;
 import com.heima.wemedia.service.WmNewsService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
@@ -40,6 +41,8 @@ public class WmNewsServiceImpl implements WmNewsService {
     private WmNewsMaterialMapper wmNewsMaterialMapper;
     @Autowired
     private WmMaterialMapper wmMaterialMapper;
+    @Autowired
+    private WmNewsAutoScanService wmNewsAutoScanService;
 
     /**
      * 条件分页查询文章列表
@@ -107,14 +110,12 @@ public class WmNewsServiceImpl implements WmNewsService {
             int insert = wmNewsMapper.insert(wmNews);
             if(insert<=0){
                 log.error("新增文章失败,wmNews：{}",wmNews);
-                throw new CustomException(AppHttpCodeEnum.SERVER_ERROR);
             }
         }else{
             //修改
             int i = wmNewsMapper.updateById(wmNews);
             if(i<=0){
                 log.error("修改文章失败,wmNews：{}",wmNews);
-                throw new CustomException(AppHttpCodeEnum.SERVER_ERROR);
             }
             //删除素材关联表中的数据
             wmNewsMaterialMapper.delete(new LambdaQueryWrapper<WmNewsMaterial>()
@@ -130,6 +131,9 @@ public class WmNewsServiceImpl implements WmNewsService {
         saveRelativeInfo(materials,newsId,WemediaConstants.WM_CONTENT_REFERENCE);
         //5、保存文章和封面图片的关联信息
         saveRelativeInfo(images,newsId,WemediaConstants.WM_COVER_REFERENCE);
+
+        //审核文章
+        wmNewsAutoScanService.autoScanWmNews(wmNews.getId());
 
         return ResponseResult.okResult(null);
     }
@@ -272,7 +276,6 @@ public class WmNewsServiceImpl implements WmNewsService {
         int i = wmNewsMapper.updateById(wmNews);
         if(i<=0){
             log.error("修改文章上下架状态失败,dto:{}",dto);
-            throw new CustomException(AppHttpCodeEnum.SERVER_ERROR);
         }
         return ResponseResult.okResult(null);
     }

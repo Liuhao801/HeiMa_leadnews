@@ -165,7 +165,6 @@ public class WmMaterialServiceImpl implements WmMaterialService {
         int i = wmMaterialMapper.updateById(wmMaterial);
         if(i<=0){
             log.info("取消或添加收藏,id:{}",id);
-            return ResponseResult.errorResult(AppHttpCodeEnum.SERVER_ERROR);
         }
         return ResponseResult.okResult(null);
     }
