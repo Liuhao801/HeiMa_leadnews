@@ -9,6 +9,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 @FeignClient(value = "leadnews-article",fallbackFactory = IArticleCilentFallbackFactory.class)
 public interface IArticleClient {
 
+    /**
+     * 保存文章到app端
+     * @param dto
+     * @return
+     */
     @PostMapping("/api/v1/article/save")
     public ResponseResult saveArticle(@RequestBody ArticleDto dto);
 }

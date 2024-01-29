@@ -19,6 +19,7 @@ import com.heima.wemedia.mapper.WmNewsMapper;
 import com.heima.wemedia.mapper.WmNewsMaterialMapper;
 import com.heima.wemedia.service.WmNewsAutoScanService;
 import com.heima.wemedia.service.WmNewsService;
+import com.heima.wemedia.service.WmNewsTaskService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -43,7 +44,8 @@ public class WmNewsServiceImpl implements WmNewsService {
     private WmMaterialMapper wmMaterialMapper;
     @Autowired
     private WmNewsAutoScanService wmNewsAutoScanService;
-
+    @Autowired
+    private WmNewsTaskService wmNewsTaskService;
     /**
      * 条件分页查询文章列表
      * @param dto
@@ -132,8 +134,10 @@ public class WmNewsServiceImpl implements WmNewsService {
         //5、保存文章和封面图片的关联信息
         saveRelativeInfo(images,newsId,WemediaConstants.WM_COVER_REFERENCE);
 
-        //审核文章
-        wmNewsAutoScanService.autoScanWmNews(wmNews.getId());
+//        //审核文章
+//        wmNewsAutoScanService.autoScanWmNews(wmNews.getId());
+        //创建文章发布任务，加入延迟队列
+        wmNewsTaskService.addNewsToTask(wmNews.getId(),wmNews.getPublishTime());
 
         return ResponseResult.okResult(null);
     }
