@@ -42,5 +42,5 @@ public interface WmNewsService {
      * @param dto
      * @return
      */
-    public ResponseResult down_or_up(WmNewsDto dto);
+    public ResponseResult downOrUp(WmNewsDto dto);
 }

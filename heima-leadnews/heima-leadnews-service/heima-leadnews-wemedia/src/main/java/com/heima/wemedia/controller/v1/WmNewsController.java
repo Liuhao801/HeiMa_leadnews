@@ -36,24 +36,24 @@ public class WmNewsController {
         return wmNewsService.submitNews(dto);
     }
 
-    @GetMapping("one/{id}")
+    @GetMapping("/one/{id}")
     @ApiOperation("查询文章详情")
     public ResponseResult getNews(@PathVariable Integer id){
         log.info("查询文章详情,文章id:{}",id);
         return wmNewsService.getNews(id);
     }
 
-    @GetMapping("del_news/{id}")
+    @GetMapping("/del_news/{id}")
     @ApiOperation("删除文章")
     public ResponseResult delNews(@PathVariable Integer id){
         log.info("删除文章,文章id:{}",id);
         return wmNewsService.delNews(id);
     }
 
-    @PostMapping("down_or_up")
+    @PostMapping("/down_or_up")
     @ApiOperation("文章上下架")
-    public ResponseResult down_or_up(@RequestBody WmNewsDto dto){
+    public ResponseResult downOrUp(@RequestBody WmNewsDto dto){
         log.info("文章上下架,dto:{}",dto);
-        return wmNewsService.down_or_up(dto);
+        return wmNewsService.downOrUp(dto);
     }
 }

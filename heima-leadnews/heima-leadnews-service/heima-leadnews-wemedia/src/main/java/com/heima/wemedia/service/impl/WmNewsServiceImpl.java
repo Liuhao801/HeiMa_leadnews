@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.heima.common.constants.WemediaConstants;
+import com.heima.common.constants.WmNewsMessageConstants;
 import com.heima.common.exception.CustomException;
 import com.heima.model.common.dtos.PageResponseResult;
 import com.heima.model.common.dtos.ResponseResult;
@@ -24,13 +25,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -46,6 +45,9 @@ public class WmNewsServiceImpl implements WmNewsService {
     private WmNewsAutoScanService wmNewsAutoScanService;
     @Autowired
     private WmNewsTaskService wmNewsTaskService;
+    @Autowired
+    private KafkaTemplate<String,String> kafkaTemplate;
+
     /**
      * 条件分页查询文章列表
      * @param dto
@@ -261,7 +263,7 @@ public class WmNewsServiceImpl implements WmNewsService {
      * @return
      */
     @Override
-    public ResponseResult down_or_up(WmNewsDto dto) {
+    public ResponseResult downOrUp(WmNewsDto dto) {
         //1、检查参数
         if(dto==null||dto.getId()==null){
             return ResponseResult.errorResult(AppHttpCodeEnum.PARAM_INVALID,"文章id不可缺少");
@@ -276,10 +278,20 @@ public class WmNewsServiceImpl implements WmNewsService {
             return ResponseResult.errorResult(AppHttpCodeEnum.PARAM_INVALID,"只有已发布的文章可以上下架");
         }
         //3、修改文章上下架状态
-        wmNews.setEnable(dto.getEnable());
-        int i = wmNewsMapper.updateById(wmNews);
-        if(i<=0){
-            log.error("修改文章上下架状态失败,dto:{}",dto);
+        if(dto.getEnable() != null && dto.getEnable() > -1 && dto.getEnable() < 2){
+            wmNews.setEnable(dto.getEnable());
+            int i = wmNewsMapper.updateById(wmNews);
+            if(i<=0){
+                log.error("修改文章上下架状态失败,dto:{}",dto);
+            }
+            //4、向kafka发送消息，通知article端修改文章配置
+            if(wmNews.getArticleId()!=null){
+                Map<String,Object> map=new HashMap<>();
+                map.put("articleId",wmNews.getArticleId());
+                map.put("enable",wmNews.getEnable());
+                kafkaTemplate.send(WmNewsMessageConstants.WM_NEWS_UP_OR_DOWN_TOPIC,JSON.toJSONString(map));
+                log.info("通知article端修改文章配置，map:{}",map);
+            }
         }
         return ResponseResult.okResult(null);
     }

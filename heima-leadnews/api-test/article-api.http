@@ -12,3 +12,7 @@ Content-Type: application/json
   "images": "http://43.137.8.13:9000/leadnews/1.jpg",
   "content":"黑马头条项目背景,黑马头条项目背景,黑马头条项目背景,黑马头条项目背景，黑马头条项目背景"
 }
+
+
+### kafka-test
+GET localhost:9991/hello

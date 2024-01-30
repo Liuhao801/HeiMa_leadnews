@@ -1,0 +1,8 @@
+### 文章上下架
+POST {{wemedia}}/api/v1/news/down_or_up
+Content-Type: application/json
+
+{
+  "id": "6239",
+  "enable": "0"
+}
