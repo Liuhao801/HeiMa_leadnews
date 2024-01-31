@@ -4,14 +4,15 @@ import com.heima.model.common.dtos.ResponseResult;
 import com.heima.model.search.dtos.UserSearchDto;
 
 /**
- * es搜索相关接口
+ * 联想词相关接口
  */
-public interface ArticleSearchService {
+public interface ApAssociateWordsService {
 
     /**
-     * es文章分页检索
+     * 查询联想词
      * @param dto
      * @return
      */
-    public ResponseResult search(UserSearchDto dto);
+    public ResponseResult findAssociate(UserSearchDto dto);
+
 }

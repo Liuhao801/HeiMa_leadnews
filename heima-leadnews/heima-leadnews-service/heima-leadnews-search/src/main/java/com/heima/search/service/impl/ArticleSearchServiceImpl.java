@@ -4,7 +4,10 @@ import com.alibaba.fastjson.JSON;
 import com.heima.model.common.dtos.ResponseResult;
 import com.heima.model.common.enums.AppHttpCodeEnum;
 import com.heima.model.search.dtos.UserSearchDto;
+import com.heima.model.user.pojos.ApUser;
+import com.heima.search.service.ApUserSearchService;
 import com.heima.search.service.ArticleSearchService;
+import com.heima.utils.thread.AppThreadLocalUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.elasticsearch.action.search.SearchRequest;
@@ -28,8 +31,11 @@ import java.util.Map;
 @Service
 @Slf4j
 public class ArticleSearchServiceImpl implements ArticleSearchService {
+
     @Autowired
     private RestHighLevelClient restHighLevelClient;
+    @Autowired
+    private ApUserSearchService apUserSearchService;
 
     /**
      * es文章分页检索
@@ -42,6 +48,14 @@ public class ArticleSearchServiceImpl implements ArticleSearchService {
         if(dto==null || StringUtils.isBlank(dto.getSearchWords())){
             return ResponseResult.errorResult(AppHttpCodeEnum.PARAM_INVALID);
         }
+
+        //异步调用，保存用户搜索关键词
+        ApUser apUser = AppThreadLocalUtils.getUser();
+        if(apUser!=null && dto.getFromIndex()==0){
+            //用户登录&&首次查询
+            apUserSearchService.insert(dto.getSearchWords(),apUser.getId());
+        }
+
         //2、设置查询条件
         SearchRequest searchRequest=new SearchRequest("app_info_article");
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
