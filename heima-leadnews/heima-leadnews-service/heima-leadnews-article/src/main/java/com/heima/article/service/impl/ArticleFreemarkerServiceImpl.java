@@ -5,15 +5,19 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.heima.article.mapper.ApArticleContentMapper;
 import com.heima.article.mapper.ApArticleMapper;
 import com.heima.article.service.ArticleFreemarkerService;
+import com.heima.common.constants.ArticleConstants;
 import com.heima.file.service.FileStorageService;
 import com.heima.model.article.pojos.ApArticle;
 import com.heima.model.article.pojos.ApArticleContent;
+import com.heima.model.search.vos.SearchArticleVo;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -35,6 +39,8 @@ public class ArticleFreemarkerServiceImpl implements ArticleFreemarkerService {
     private ApArticleMapper apArticleMapper;
     @Autowired
     private FileStorageService fileStorageService;
+    @Autowired
+    private KafkaTemplate<String,String> kafkaTemplate;
 
     /**
      * 生成静态文件上传到minIO中
@@ -65,6 +71,25 @@ public class ArticleFreemarkerServiceImpl implements ArticleFreemarkerService {
             article.setId(articleId);
             article.setStaticUrl(path);
             apArticleMapper.updateById(article);
+
+            //向kafka发送消息，在es中创建索引
+            createArticleESIndex(articleId,content);
         }
+    }
+
+    /**
+     * 向kafka发送消息，在es中创建索引
+     * @param articleId
+     * @param content
+     */
+    private void createArticleESIndex(Long articleId, String content) {
+        //1、封装数据
+        ApArticle apArticle = apArticleMapper.selectById(articleId);
+        SearchArticleVo searchArticleVo =new SearchArticleVo();
+        BeanUtils.copyProperties(apArticle,searchArticleVo);
+        searchArticleVo.setContent(content);
+
+        //2、向kafka发送消息
+        kafkaTemplate.send(ArticleConstants.ARTICLE_ES_SYNC_TOPIC,JSON.toJSONString(searchArticleVo));
     }
 }

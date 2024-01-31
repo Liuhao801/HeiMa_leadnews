@@ -1,0 +1,13 @@
+server:
+  port: 51804
+spring:
+  application:
+    name: leadnews-search
+  cloud:
+    nacos:
+      server-addr: localhost:8845
+      discovery:
+        namespace: leadnews
+      config:
+        namespace: leadnews
+        file-extension: yaml
