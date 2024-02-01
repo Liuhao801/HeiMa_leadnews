@@ -103,7 +103,8 @@ public class WmNewsAutoScanServiceImpl implements WmNewsAutoScanService {
      * @param wmNews
      * @return
      */
-    private ResponseResult saveAppArticle(WmNews wmNews) {
+    @Override
+    public ResponseResult saveAppArticle(WmNews wmNews) {
         //1、属性填充
         ArticleDto dto = new ArticleDto();
         BeanUtils.copyProperties(wmNews,dto);

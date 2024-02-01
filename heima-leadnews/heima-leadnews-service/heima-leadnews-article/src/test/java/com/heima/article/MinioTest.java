@@ -17,10 +17,11 @@ public class MinioTest {
     //上传文件
     @Test
     public void upload() throws Exception {
-        FileInputStream inputStream = new FileInputStream("E:\\java\\HeiMa_leadnews\\day02-app端文章查看，静态化freemarker,分布式文件系统minIO\\资料\\模板文件\\plugins\\js\\index.js");
+        FileInputStream inputStream =
+                new FileInputStream("E:\\java\\HeiMa_leadnews\\day08-平台管理[实战]\\资料\\后台数据图\\live_image.jpg");
         PutObjectArgs putObjectArgs = PutObjectArgs.builder()
-                .object("plugins/js/index.js")
-                .contentType("text/javascript")
+                .object("images/live_image.jpg")
+                .contentType("image/jpg")
                 .bucket("leadnews")
                 .stream(inputStream,inputStream.available(),-1)
                 .build();

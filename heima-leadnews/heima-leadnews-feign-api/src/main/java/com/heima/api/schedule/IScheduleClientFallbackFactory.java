@@ -15,19 +15,19 @@ public class IScheduleClientFallbackFactory implements FallbackFactory<ISchedule
         return new IScheduleClient() {
             @Override
             public ResponseResult addTask(Task task) {
-                log.info("触发降级逻辑，熔断异常:{}",throwable);
+                log.info("触发降级逻辑，熔断异常");
                 return ResponseResult.errorResult(AppHttpCodeEnum.SERVER_ERROR);
             }
 
             @Override
             public ResponseResult cancelTask(long taskId) {
-                log.info("触发降级逻辑，熔断异常:{}",throwable);
+                log.info("触发降级逻辑，熔断异常");
                 return ResponseResult.errorResult(AppHttpCodeEnum.SERVER_ERROR);
             }
 
             @Override
             public ResponseResult poll(int type, int priority) {
-                log.info("触发降级逻辑，熔断异常:{}",throwable);
+                log.info("触发降级逻辑，熔断异常");
                 return ResponseResult.errorResult(AppHttpCodeEnum.SERVER_ERROR);
             }
         };
